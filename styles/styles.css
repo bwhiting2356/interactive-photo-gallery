@@ -110,8 +110,8 @@ input {
     margin: auto;
 }
 
-.arrow-left, 
-.arrow-right {
+#arrow-left, 
+#arrow-right {
     display: inline;
     vertical-align: middle;
     z-index: 1000;
