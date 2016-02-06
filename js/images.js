@@ -66,26 +66,22 @@ function bind_model_to_imgs() {
     for (var i = 0; i < imgs.length; i++) {
         imgs[i].onclick = function() {
             var modal_window = document.getElementById("modal-window");
-            modal_window.style.opacity="0.9";
             modal_window.style.display="block";
             var content_wrapper = document.getElementById("content-wrapper");
-            console.log(content_wrapper)
             var html_string = "<img src='images/full-pictures/idx.jpg'\
                                 class='modal-image'\
                                 alt='title'>\
                                 <p class='cpn-text'>caption</p>"
-
             html_string = html_string.replace("title", this.getAttribute("title"));
             html_string = html_string.replace("idx", this.getAttribute("data_index"));
             html_string = html_string.replace("caption", this.getAttribute("data_caption"));
 
-
-
+            modal_window.onclick = function() {
+                modal_window.style.display="none";
+            }
             content_wrapper.innerHTML = html_string;
-            console.log("I clicked an image");
         }
     }
-    console.log(imgs);
 }
 
 function populate_images(image_list) {
@@ -93,6 +89,7 @@ function populate_images(image_list) {
     image_container.innerHTML = "";
     for (var i = 0; i < image_list.length; i++) {
         var html_string = "<div class='image'><img src='images/thumbnails/idx.jpg'\
+                            class='thumbnail'\
                             data_index='idx'\
                             data_caption='cpn'\
                             alt='title'></div>";
