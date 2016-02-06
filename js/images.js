@@ -174,14 +174,11 @@ function populate_images(image_list) {
     image_container.innerHTML = "";
     for (var i = 0; i < image_list.length; i++) {
         var html_string = img_div_html;
-        console.log("this is the image title");
-        console.log(image_list[i].title)
         html_string = html_string.replace("title", image_list[i].title);
         html_string = html_string.replace("idx", image_list[i].idx); 
         html_string = html_string.replace("idx", image_list[i].idx); 
         html_string = html_string.replace("cpn", image_list[i].caption); 
         image_container.innerHTML += html_string;
-        console.log(image_container.innerHTML);
     } 
     current_html_images = document.getElementsByClassName("thumbnail");
     bind_modal_to_imgs(current_html_images);
@@ -209,5 +206,4 @@ function bind_input_event() {
 window.onload=function() {
     populate_images(raw_image_data);
     bind_input_event();
-    console.log(modal_window)
 };

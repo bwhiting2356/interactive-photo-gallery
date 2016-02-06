@@ -25,6 +25,10 @@ input {
     font-size: 16pt;
 }
 
+* {
+    font-family: Inconsolata;
+}
+
 
 /*************************************
     IMAGE STYLES
@@ -106,18 +110,19 @@ input {
     left: 50%;
     transform: translateX(-50%);
     color: white;
+    opacity: 0.85;
     text-align: left;
-    line-height: 1.4em;
+    line-height: 1.6em;
     max-width: 600px;
 }
 
 #arrow-right {
-    opacity: 0.75;
+    opacity: 0.85;
     transform: scale(0.75, 0.75);
 }
 
 #arrow-left {
-    opacity: 0.75;
+    opacity: 0.85;
     transform: scale(0.75, 0.75) rotate(180deg);
 }
 
