@@ -1,9 +1,27 @@
 /*************************************
-    FORM STYLES
+    HEADER STYLES
 *************************************/
+
+header {
+    position: fixed;
+    background: white;
+    width: 100%;
+    z-index: 10;
+}
 
 form {
     text-align: center;
+}
+
+input {
+    box-sizing: border-box; 
+    width: 200px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    height: 40px;
+    border: 2px solid #C0C0C0;
+    border-radius: 5px;
+    padding: 5px;
 }
 
 
@@ -12,26 +30,26 @@ form {
 *************************************/
 
 #image-container {
+    padding-top: 100px;
     width: 80%;
     display: flex;
     margin: auto;
     flex-wrap: wrap;
-    justify-content: flex-start;
-    margin-bottom: 60px;
+    z-index: -10;
 }
 
 .image {
-    margin-top: 60px;
+    margin-bottom: 60px;
     margin-left: auto;
     margin-right: auto;
 }
 
-img.thumbnail {
-  cursor: pointer; 
-  cursor: hand; 
+.thumbnail {
+    cursor: pointer; 
+    cursor: hand; 
 }
 
-img.thumbnail:hover {
+.thumbnail:hover {
     opacity: 0.75;
 }
 
@@ -40,51 +58,80 @@ img.thumbnail:hover {
 *************************************/
 
 #modal-window {
-    width: 100vw;
-    height: 100vw;
+/*    width: 100vw;
+    height: 100vh;*/
     background: rgba(24, 24, 24, 0.9);
-    position: fixed;
+    position: absolute;
     top: 0;
     display: none;
     cursor: pointer; 
     cursor: hand; 
+    z-index: 100;
+    margin: 1px;
 }
 
 #content-wrapper {
-    position: fixed;
-    left: 0;
-    right: 0;
-    top: calc(50vh - 200px);
-    bottom: calc(50vh - 175px);
+    width: 100vw;
+}
+
+.img-wrapper {
     margin: auto;
 }
 
+/*#modal-window:after {
+    content: " ";
+    clear: both;
+    display: table;
+}
+
+#content-wrapper:after {
+    content: " ";
+    clear: both;
+    display: table;
+}*/
+
 .modal-image {
-    position: fixed;
-    left: 0;
-    right: 0;
-    width: 100%;
-    left: 10%;
-    right: 10%;
-    opacity: 1;
+    margin-top: 104px;
+    width: 300px;
+/*    margin-left: calc((100vw - 300px)/2);
+    margin-right: calc((100vw - 300px)/2);*/
+    display: inline;
 }
 
 .cpn-text {
-    position: fixed;
-    width: 500px;
-    left: calc(50vw - 250px);
-    right: calc(50vw - 250px);
-    top: 540px;
     color: white;
+    text-align: left;
+}
+
+.cpn-wrapper {
+    max-width: 200px;
+    padding-top: 50px;
+    padding-bottom: 100px;
+    margin: auto;
+}
+
+.arrow-left, 
+.arrow-right {
+    display: inline;
+    vertical-align: middle;
+    z-index: 1000;
+}
+
+#arrow-left {
+    transform: rotate(180deg);
+}
+
+#arrow-right {
+
 }
 
 /*************************************
    MEDIA QUERIES
 *************************************/
 
-@media screen and (min-width: 500px) and (max-width: 799px) {
+@media screen and (min-width: 500px) {
 
-    #image-container {
+    input {
         width: 460px;
     }
 
@@ -92,9 +139,26 @@ img.thumbnail:hover {
         margin-left: 0;
         margin-right: 60px;
     }
+}
+
+@media screen and (min-width: 500px) and (max-width: 799px) {
+
+    #image-container {
+        width: 460px;
+    }
 
     .image:nth-child(2n) {
         margin-right: 0;
+    }
+
+    .modal-image {
+        width: 460px;
+/*        margin-left: calc((100vw - 460px)/2);
+        margin-right: calc((100vw - 460px)/2);*/
+    }
+
+    .cpn-text {
+/*        width: 400px;*/
     }
 }
 
@@ -104,13 +168,18 @@ img.thumbnail:hover {
         width: 720px;
     }
 
-    .image {
-        margin-left: 0;
-        margin-right: 60px;
-    }
-
     .image:nth-child(3n) {
         margin-right: 0;
+    }
+
+    .modal-image {
+        width: 700px;
+/*        margin-left: calc((100vw - 700px)/2);
+        margin-right: calc((100vw - 700px)/2);*/
+    }
+
+    .cpn-text {
+/*        width: 600px;*/
     }
 }
 
@@ -120,12 +189,27 @@ img.thumbnail:hover {
         width: 980px;
     }
 
-    .image {
-        margin-left: 0;
-        margin-right: 60px;
-    }
-
     .image:nth-child(4n) {
         margin-right: 0;
+    }
+
+    .modal-image {
+        width: 800px;
+/*       margin-left: calc((100vw - 800px)/2);
+        margin-right: calc((100vw - 800px)/2);*/
+    }
+
+    .cpn-text {
+        color: red;
+        text-align: left;
+        display: inline;
+        margin: auto;
+    }
+
+    .cpn-wrapper {
+        max-width: 600px;
+        padding-top: 50px;
+        padding-bottom: 100px;
+        margin: auto;
     }
 }
