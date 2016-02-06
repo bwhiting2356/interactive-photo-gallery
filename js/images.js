@@ -59,26 +59,33 @@ var raw_image_data = [
         "title": "Bluebells",
         "caption": "I walked through this meadow of bluebells and got a good view of the snow on the mountain before the fog came in."
     },
-]
+];
 
-
-
+/*jshint multistr: true */
 var modal_content_html = "\
+<div id='top-panel'></div>\
 <div class='img-wrapper'>\
-    <img src='images/icons/chevron.svg' alt='Left Arrow' id='arrow-left' height='50px'>\
-    <img src='images/full-pictures/idx.jpg' class='modal-image' alt='title'>\
-    <img src='images/icons/chevron.svg' alt='Right Arrow' id='arrow-right' height='50px'>\
+    <div id='left-panel'>\
+        <img src='images/icons/chevron.svg' alt='Left Arrow' id='arrow-left' height='50px'>\
+    </div>\
+    <img src='images/full-pictures/idx.jpg' id='modal-image' alt='title'>\
+    <div id='right-panel'>\
+        <img src='images/icons/chevron.svg' alt='Right Arrow' id='arrow-right' height='50px'>\
+    </div>\
 </div>\
-<div class='cpn-wrapper'>\
+<div id='bottom-panel'>\
     <p class='cpn-text'>caption</p>\
 </div>\
-"
-
-var img_div_string = "\
+";
+  
+/*jshint multistr: true */
+var img_div_html = "\
 <div class='image'>\
     <img src='images/thumbnails/idx.jpg' class='thumbnail' data_index='idx' data_caption='cpn' alt='title'>\
 </div>\
-"
+";
+
+var current_html_images = []; // will be filled in laters
 
 function find_index_of_image(image) {
     for (var i = 0; i < current_html_images.length; i++) {
@@ -88,57 +95,77 @@ function find_index_of_image(image) {
     }
 }
 
+var modal_window = "" // will be filled in later
+
+function hide_modal() {
+    modal_window.style.display="none";
+};
+
+
 function launch_modal(image) {
-    var modal_window = document.getElementById("modal-window");
+    modal_window = document.getElementById("modal-window");
     var content_wrapper = document.getElementById("content-wrapper");
     var html_string = modal_content_html;
 
     var current_index = find_index_of_image(image);
 
-    html_string = html_string.replace("title", image.getAttribute("title"));
+    html_string = html_string.replace("title", image.getAttribute("alt"));
     html_string = html_string.replace("idx", image.getAttribute("data_index"));
     html_string = html_string.replace("caption", image.getAttribute("data_caption"));
 
-    var document_height = document.getElementsByTagName("html")[0].scrollHeight;
-    if (document_height > 750) {
-        modal_window.style.height = "{}px".replace("{}", document_height);   
-    } else {
-        modal_window.style.height = "750px";      
-    }
-
-    // modal_window.onclick = function() {
-    //     modal_window.style.display="none";
-    // }
-
     content_wrapper.innerHTML = html_string;
 
-    var right_arrow = document.getElementById("arrow-right");
-    right_arrow.onclick = function() { 
+    var top_panel = document.getElementById("top-panel");
+    var bottom_panel = document.getElementById("bottom-panel");
+    var modal_image = document.getElementById("modal-image");
+
+    top_panel.onclick = hide_modal;
+    bottom_panel.onclick = hide_modal;
+    modal_image.onclick = hide_modal;
+
+    var right_panel = document.getElementById("right-panel");
+    right_panel.onclick = function() { 
         var next_index = current_index + 1;
         if ((current_index + 2) > current_html_images.length) {
-            next_index = (current_index + 1) % current_html_images.length
+            next_index = (current_index + 1) % current_html_images.length;
         }
-        var next_image = current_html_images[next_index]
+        var next_image = current_html_images[next_index];
         launch_modal(next_image);
-    }
-    var left_arrow = document.getElementById("arrow-left");
-    left_arrow.onclick = function() {
+    };
+    right_panel.onmouseenter = function() {
+        this.style.background = "rgba(24, 24, 24, 0.8)";
+        console.log("hey");
+    };
+    right_panel.onmouseleave = function() {
+        this.style.background = "rgba(24, 24, 24, 0.9)";
+    };
+
+    var left_panel = document.getElementById("left-panel");
+    left_panel.onclick = function() {
         var previous_index = current_index - 1;
-        if (current_index == 0) {
+        if (current_index === 0) {
             previous_index = current_html_images.length - 1;
         }
         var previous_image = current_html_images[previous_index];
         launch_modal(previous_image);
+    };
+    left_panel.onmouseenter = function() {
+        this.style.background = "rgba(24, 24, 24, 0.8)"
+    };
+    left_panel.onmouseleave = function() {
+        this.style.background = "rgba(24, 24, 24, 0.9)";
     }
+
     modal_window.style.display="block";
 }
 
 
 function bind_modal_to_imgs(imgs) {
     for (var i = 0; i < imgs.length; i++) {
+        /*jshint -W083 */
         imgs[i].onclick = function() {
             launch_modal(this);
-        }
+        };
     }
 }
 
@@ -146,17 +173,19 @@ function populate_images(image_list) {
     var image_container = document.getElementById("image-container");
     image_container.innerHTML = "";
     for (var i = 0; i < image_list.length; i++) {
-        var html_string = img_div_string;
+        var html_string = img_div_html;
+        console.log("this is the image title");
+        console.log(image_list[i].title)
         html_string = html_string.replace("title", image_list[i].title);
         html_string = html_string.replace("idx", image_list[i].idx); 
         html_string = html_string.replace("idx", image_list[i].idx); 
         html_string = html_string.replace("cpn", image_list[i].caption); 
         image_container.innerHTML += html_string;
+        console.log(image_container.innerHTML);
     } 
     current_html_images = document.getElementsByClassName("thumbnail");
     bind_modal_to_imgs(current_html_images);
 }
-
 
 
 function bind_input_event() {
@@ -174,11 +203,11 @@ function bind_input_event() {
             }
         }
     populate_images(results);
-    }
+    };
 }
-
 
 window.onload=function() {
     populate_images(raw_image_data);
     bind_input_event();
-}
+    console.log(modal_window)
+};
