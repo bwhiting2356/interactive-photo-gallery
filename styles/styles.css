@@ -26,12 +26,49 @@ form {
     margin-right: auto;
 }
 
+img {
+  cursor: pointer; 
+  cursor: hand; 
+}
+
+img:hover {
+    opacity: 0.75;
+}
+
+/*************************************
+    MODAL WINDOW
+*************************************/
+
+#modal-window {
+    width: 100vw;
+    height: 100vw;
+    background: #181818;
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    display: none;
+}
+
+#content-wrapper {
+    margin: auto;
+}
+
+.modal-image {
+    width: 600px;
+    opacity: 1;
+    margin: auto;
+}
+
+.cpn-text {
+    color: white;
+}
+
 /*************************************
    MEDIA QUERIES
 *************************************/
 
 @media screen and (min-width: 500px) and (max-width: 799px) {
-    
+
     #image-container {
         width: 460px;
     }
