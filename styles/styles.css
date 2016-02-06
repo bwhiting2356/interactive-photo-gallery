@@ -1,0 +1,79 @@
+/*************************************
+    FORM STYLES
+*************************************/
+
+form {
+    text-align: center;
+}
+
+
+/*************************************
+    IMAGE STYLES
+*************************************/
+
+#image-container {
+    width: 80%;
+    display: flex;
+    margin: auto;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    margin-bottom: 60px;
+}
+
+.image {
+    margin-top: 60px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/*************************************
+   MEDIA QUERIES
+*************************************/
+
+@media screen and (min-width: 500px) and (max-width: 799px) {
+    
+    #image-container {
+        width: 460px;
+    }
+
+    .image {
+        margin-left: 0;
+        margin-right: 60px;
+    }
+
+    .image:nth-child(2n) {
+        margin-right: 0;
+    }
+}
+
+@media screen and (min-width: 800px) and (max-width: 999px) {
+
+    #image-container {
+        width: 720px;
+    }
+
+    .image {
+        margin-left: 0;
+        margin-right: 60px;
+    }
+
+    .image:nth-child(3n) {
+        margin-right: 0;
+    }
+}
+
+@media screen and (min-width: 1000px) {
+
+    #image-container {
+        width: 980px;
+    }
+
+    .image {
+        margin-left: 0;
+        margin-right: 60px;
+    }
+
+    .image:nth-child(4n) {
+        margin-right: 0;
+    }
+}
