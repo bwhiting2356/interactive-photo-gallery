@@ -1,4 +1,4 @@
-var raw_image_data = [
+var raw_data = [
     { 
         "idx": "01",
         "title": "Hay Bales",
@@ -65,11 +65,11 @@ var raw_image_data = [
 var modal_content_html = "\
 <div id='top-panel'></div>\
 <div class='img-wrapper'>\
-    <div id='left-panel'>\
+    <div id='left-panel' tabindex='0'>\
         <img src='images/icons/chevron.svg' alt='Left Arrow' id='arrow-left' height='50px'>\
     </div>\
-    <img src='images/full-pictures/idx.jpg' id='modal-image' alt='title'>\
-    <div id='right-panel'>\
+    <img src='images/full-pictures/idx.jpg' id='modal-image' alt='ttl' title='ttl'>\
+    <div id='right-panel' tabindex='0'>\
         <img src='images/icons/chevron.svg' alt='Right Arrow' id='arrow-right' height='50px'>\
     </div>\
 </div>\
@@ -81,7 +81,8 @@ var modal_content_html = "\
 /*jshint multistr: true */
 var img_div_html = "\
 <div class='image'>\
-    <img src='images/thumbnails/idx.jpg' class='thumbnail' data_index='idx' data_caption='cpn' alt='title'>\
+    <img src='images/thumbnails/idx.jpg' class='thumbnail'\
+    tabindex='0' data_index='idx' data_caption='cpn' alt='ttl' title='ttl'>\
 </div>\
 ";
 
@@ -95,21 +96,66 @@ function find_index_of_image(image) {
     }
 }
 
-var modal_window = "" // will be filled in later
+var current_index = 0; // will be filled in later
+// var modal_visible = false;
+var modal_window = ""; // will be filled in later
+
+function next_image() {
+    var next_index = current_index + 1;
+    if ((current_index + 2) > current_html_images.length) {
+        next_index = (current_index + 1) % current_html_images.length;
+    }
+    var next_image = current_html_images[next_index];
+    launch_modal(next_image);
+}
+
+function previous_image() {
+    var previous_index = current_index - 1;
+    if (current_index === 0) {
+        previous_index = current_html_images.length - 1;
+    }
+    var previous_image = current_html_images[previous_index];
+    launch_modal(previous_image);
+}
+
+function restore_default_keys() {
+    window.removeEventListener("keydown", special_keys);
+}
+
+function special_keys(e) {
+    if (e.keyCode === 39) { // Right Arrow
+        e.preventDefault();
+        next_image();
+    } else if (e.keyCode === 37) { // Left Arrow
+        e.preventDefault();
+        previous_image();
+    } else if ((e.keyCode === 13) || (e.keyCode === 32)) { // Spacebar or Enter
+        e.preventDefault();
+        hide_modal();
+        restore_default_keys();
+    }
+}
+
+function make_modal_keys() {
+    window.addEventListener("keydown", special_keys);
+}
+
+
 
 function hide_modal() {
     modal_window.style.display="none";
-};
-
+    restore_default_keys();
+}
 
 function launch_modal(image) {
+    current_index = find_index_of_image(image);
     modal_window = document.getElementById("modal-window");
     var content_wrapper = document.getElementById("content-wrapper");
     var html_string = modal_content_html;
 
-    var current_index = find_index_of_image(image);
-
-    html_string = html_string.replace("title", image.getAttribute("alt"));
+    html_string = html_string.replace("ttl", image.getAttribute("title"));
+    html_string = html_string.replace("ttl", image.getAttribute("title"));
+    html_string = html_string.replace("idx", image.getAttribute("data_index"));
     html_string = html_string.replace("idx", image.getAttribute("data_index"));
     html_string = html_string.replace("caption", image.getAttribute("data_caption"));
 
@@ -119,52 +165,45 @@ function launch_modal(image) {
     var bottom_panel = document.getElementById("bottom-panel");
     var modal_image = document.getElementById("modal-image");
 
+    function set_bottom_height() {
+        var remaining_height = document.documentElement.scrollHeight - modal_image.height - 104;
+        bottom_panel.style.height = "{}px".replace("{}", remaining_height);
+    }
+    set_bottom_height();
+
+    window.onresize = function() {
+        if (modal_window !== "") {
+            set_bottom_height();
+        }
+    };
+
     top_panel.onclick = hide_modal;
     bottom_panel.onclick = hide_modal;
     modal_image.onclick = hide_modal;
 
     var right_panel = document.getElementById("right-panel");
-    right_panel.onclick = function() { 
-        var next_index = current_index + 1;
-        if ((current_index + 2) > current_html_images.length) {
-            next_index = (current_index + 1) % current_html_images.length;
-        }
-        var next_image = current_html_images[next_index];
-        launch_modal(next_image);
-    };
-    right_panel.onmouseenter = function() {
-        this.style.background = "rgba(24, 24, 24, 0.8)";
-        console.log("hey");
-    };
-    right_panel.onmouseleave = function() {
-        this.style.background = "rgba(24, 24, 24, 0.9)";
-    };
+    right_panel.onclick = next_image;
 
     var left_panel = document.getElementById("left-panel");
-    left_panel.onclick = function() {
-        var previous_index = current_index - 1;
-        if (current_index === 0) {
-            previous_index = current_html_images.length - 1;
-        }
-        var previous_image = current_html_images[previous_index];
-        launch_modal(previous_image);
-    };
-    left_panel.onmouseenter = function() {
-        this.style.background = "rgba(24, 24, 24, 0.8)"
-    };
-    left_panel.onmouseleave = function() {
-        this.style.background = "rgba(24, 24, 24, 0.9)";
-    }
+    left_panel.onclick = previous_image;
 
     modal_window.style.display="block";
+    window.scroll(0,0);
 }
-
 
 function bind_modal_to_imgs(imgs) {
     for (var i = 0; i < imgs.length; i++) {
         /*jshint -W083 */
         imgs[i].onclick = function() {
+            make_modal_keys();
             launch_modal(this);
+        };
+        /*jshint -W083 */
+        imgs[i].onkeypress = function(e) {
+            if ((e.keyCode === 13) || (e.keyCode == 32)) {
+                make_modal_keys();
+                launch_modal(this);
+            }
         };
     }
 }
@@ -174,7 +213,9 @@ function populate_images(image_list) {
     image_container.innerHTML = "";
     for (var i = 0; i < image_list.length; i++) {
         var html_string = img_div_html;
-        html_string = html_string.replace("title", image_list[i].title);
+        html_string = html_string.replace("ttl", image_list[i].title);
+        html_string = html_string.replace("ttl", image_list[i].title);
+        html_string = html_string.replace("idx", image_list[i].idx); 
         html_string = html_string.replace("idx", image_list[i].idx); 
         html_string = html_string.replace("idx", image_list[i].idx); 
         html_string = html_string.replace("cpn", image_list[i].caption); 
@@ -192,10 +233,10 @@ function bind_input_event() {
         var results = [];
         for (var i = 0; i < search_words.length; i++) {
             var word = search_words[i];
-            for (var j = 0; j < raw_image_data.length; j++) {
-                if ((word == raw_image_data[j].title.toLowerCase()) || 
-                    (raw_image_data[j].caption.toLowerCase().indexOf(word) > -1)) {
-                    results.push(raw_image_data[j]);
+            for (var j = 0; j < raw_data.length; j++) {
+                if ((word == raw_data[j].title.toLowerCase()) || 
+                    (raw_data[j].caption.toLowerCase().indexOf(word) > -1)) {
+                    results.push(raw_data[j]);
                 }
             }
         }
@@ -204,6 +245,6 @@ function bind_input_event() {
 }
 
 window.onload=function() {
-    populate_images(raw_image_data);
+    populate_images(raw_data);
     bind_input_event();
 };
