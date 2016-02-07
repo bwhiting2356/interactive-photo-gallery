@@ -46,8 +46,8 @@ input:focus {
 *************************************/
 
 #image-container {
-    padding-top: 100px;
-    width: 80%;
+    padding-top: 104px;
+    width: 80%;     
     display: flex;
     margin: auto;
     flex-wrap: wrap;
@@ -117,7 +117,7 @@ input:focus {
 
 
 #top-panel {
-    height: 104px;
+    height: 108px;
 }
 
 #bottom-panel {

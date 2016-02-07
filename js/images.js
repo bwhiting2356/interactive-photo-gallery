@@ -166,7 +166,7 @@ function launch_modal(image) {
     var modal_image = document.getElementById("modal-image");
 
     function set_bottom_height() {
-        var remaining_height = document.documentElement.scrollHeight - modal_image.height - 104;
+        var remaining_height = document.documentElement.scrollHeight - modal_image.height - 108;
         bottom_panel.style.height = "{}px".replace("{}", remaining_height);
     }
     set_bottom_height();
