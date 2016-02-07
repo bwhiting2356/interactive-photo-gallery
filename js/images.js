@@ -1,61 +1,97 @@
 var raw_data = [
     { 
-        "idx": "01",
+        "idx": "1",
+        "media": "img",
+        "location": "local",
+        "url": "01.jpg",
         "title": "Hay Bales",
         "caption": "I love hay bales. Took this snap on a drive through the countryside past some straw fields."
     },
     { 
-        "idx": "02",
+        "idx": "2",
+        "media": "img",
+        "location": "local",
+        "url": "02.jpg",
         "title": "Lake",
         "caption": "The lake was so calm today. We had a great view of the snow on the mountains from here."
     },
     { 
-        "idx": "03",
+        "idx": "3",
+        "media": "img",
+        "location": "local",
+        "url": "03.jpg",
         "title": "Canyon",
         "caption": "I hiked to the top of the mountain and got this picture of the canyon and trees below."
     },
         { 
-        "idx": "04",
+        "idx": "4",
+        "media": "img",
+        "location": "local",
+        "url": "04.jpg",
         "title": "Iceberg",
         "caption": "It was amazing to see an iceberg up close, it was so cold but didn’t snow today."
     },
         { 
-        "idx": "05",
+        "idx": "5",
+        "media": "img",
+        "location": "local",
+        "url": "05.jpg",
         "title": "Desert",
         "caption": "The red cliffs were beautiful. It was really hot in the desert but we did a lot of walking through the canyons."
     },
         { 
-        "idx": "06",
+        "idx": "6",
+        "media": "img",
+        "location": "local",
+        "url": "06.jpg",
         "title": "Fall",
         "caption": "Fall is coming, I love when the leaves on the trees start to change color."
     },
         { 
-        "idx": "07",
+        "idx": "7",
+        "media": "img",
+        "location": "local",
+        "url": "07.jpg",
         "title": "Plantation",
         "caption": "I drove past this plantation yesterday, everything is so green!"
     },
         { 
-        "idx": "08",
+        "idx": "8",
+        "media": "img",
+        "location": "local",
+        "url": "08.jpg",
         "title": "Dunes",
         "caption": "My summer vacation to the Oregon Coast. I love the sandy dunes!"
     },
         { 
-        "idx": "09",
+        "idx": "9",
+        "media": "img",
+        "location": "local",
+        "url": "09.jpg",
         "title": "Countryside Lane",
         "caption": "We enjoyed a quiet stroll down this countryside lane."
     },
         { 
         "idx": "10",
+        "media": "img",
+        "location": "local",
+        "url": "10.jpg",
         "title": "Sunset",
         "caption": "Sunset at the coast! The sky turned a lovely shade of orange."
     },
         { 
         "idx": "11",
+        "media": "img",
+        "location": "local",
+        "url": "11.jpg",
         "title": "Cave",
         "caption": "I did a tour of a cave today and the view of the landscape below was breathtaking."
     },
         { 
         "idx": "12",
+        "media": "img",
+        "location": "local",
+        "url": "12.jpg",
         "title": "Bluebells",
         "caption": "I walked through this meadow of bluebells and got a good view of the snow on the mountain before the fog came in."
     },
@@ -68,7 +104,7 @@ var modal_content_html = "\
     <div id='left-panel' tabindex='0'>\
         <img src='images/icons/chevron.svg' alt='Left Arrow' id='arrow-left' height='50px'>\
     </div>\
-    <img src='images/full-pictures/idx.jpg' id='modal-image' alt='ttl' title='ttl'>\
+    <img src='images/full-pictures/url' id='modal-image' alt='ttl' title='ttl'>\
     <div id='right-panel' tabindex='0'>\
         <img src='images/icons/chevron.svg' alt='Right Arrow' id='arrow-right' height='50px'>\
     </div>\
@@ -81,14 +117,14 @@ var modal_content_html = "\
 /*jshint multistr: true */
 var img_div_html = "\
 <div class='image'>\
-    <img src='images/thumbnails/idx.jpg' class='thumbnail'\
+    <img src='images/thumbnails/url' class='thumbnail'\
     tabindex='0' data_index='idx' data_caption='cpn' alt='ttl' title='ttl'>\
 </div>\
 ";
 
 var current_html_images = []; // will be filled in laters
 
-function find_index_of_image(image) {
+function find_html_index_of_image(image) {
     for (var i = 0; i < current_html_images.length; i++) {
         if (current_html_images[i].getAttribute("data_index") == image.getAttribute("data_index")) {
             return i;
@@ -96,22 +132,22 @@ function find_index_of_image(image) {
     }
 }
 
-var current_index = 0; // will be filled in later
+var current_html_index = 0; // will be filled in later
 // var modal_visible = false;
 var modal_window = ""; // will be filled in later
 
 function next_image() {
-    var next_index = current_index + 1;
-    if ((current_index + 2) > current_html_images.length) {
-        next_index = (current_index + 1) % current_html_images.length;
+    var next_index = current_html_index + 1;
+    if ((current_html_index + 2) > current_html_images.length) {
+        next_index = (current_html_index + 1) % current_html_images.length;
     }
     var next_image = current_html_images[next_index];
     launch_modal(next_image);
 }
 
 function previous_image() {
-    var previous_index = current_index - 1;
-    if (current_index === 0) {
+    var previous_index = current_html_index - 1;
+    if (current_html_index === 0) {
         previous_index = current_html_images.length - 1;
     }
     var previous_image = current_html_images[previous_index];
@@ -140,24 +176,33 @@ function make_modal_keys() {
     window.addEventListener("keydown", special_keys);
 }
 
-
-
 function hide_modal() {
     modal_window.style.display="none";
     restore_default_keys();
 }
 
+function get_raw_item(idx) {
+    for (var i = 0; i < raw_data.length; i++) {
+        if (raw_data[i].idx == idx) {
+            console.log("true");
+            return raw_data[i];
+        }
+    }
+}
+
 function launch_modal(image) {
-    current_index = find_index_of_image(image);
+    current_html_index = find_html_index_of_image(image);
+    
     modal_window = document.getElementById("modal-window");
     var content_wrapper = document.getElementById("content-wrapper");
-    var html_string = modal_content_html;
 
-    html_string = html_string.replace("ttl", image.getAttribute("title"));
-    html_string = html_string.replace("ttl", image.getAttribute("title"));
-    html_string = html_string.replace("idx", image.getAttribute("data_index"));
-    html_string = html_string.replace("idx", image.getAttribute("data_index"));
-    html_string = html_string.replace("caption", image.getAttribute("data_caption"));
+    var raw_item = get_raw_item(image.getAttribute("data_index"));
+    var html_string = modal_content_html;
+    html_string = html_string.replace("ttl", raw_item.title);
+    html_string = html_string.replace("ttl", raw_item.title);
+    html_string = html_string.replace("idx", raw_item.idx);
+    html_string = html_string.replace("url", raw_item.url);
+    html_string = html_string.replace("caption", raw_item.caption);
 
     content_wrapper.innerHTML = html_string;
 
@@ -166,7 +211,8 @@ function launch_modal(image) {
     var modal_image = document.getElementById("modal-image");
 
     function set_bottom_height() {
-        var remaining_height = document.documentElement.scrollHeight - modal_image.height - 108;
+        var top_height = top_panel.style.height
+        var remaining_height = document.documentElement.scrollHeight - modal_image.height - top_height;
         bottom_panel.style.height = "{}px".replace("{}", remaining_height);
     }
     set_bottom_height();
@@ -215,8 +261,7 @@ function populate_images(image_list) {
         var html_string = img_div_html;
         html_string = html_string.replace("ttl", image_list[i].title);
         html_string = html_string.replace("ttl", image_list[i].title);
-        html_string = html_string.replace("idx", image_list[i].idx); 
-        html_string = html_string.replace("idx", image_list[i].idx); 
+        html_string = html_string.replace("url", image_list[i].url); 
         html_string = html_string.replace("idx", image_list[i].idx); 
         html_string = html_string.replace("cpn", image_list[i].caption); 
         image_container.innerHTML += html_string;
