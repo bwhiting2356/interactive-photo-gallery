@@ -45,7 +45,7 @@ input:focus {
     IMAGE STYLES
 *************************************/
 
-#image-container {
+#media-container {
     padding-top: 104px;
     width: 80%;     
     display: flex;
@@ -54,7 +54,7 @@ input:focus {
     z-index: -10;
 }
 
-.image {
+.media {
     margin-bottom: 60px;
     margin-left: auto;
     margin-right: auto;
@@ -81,7 +81,7 @@ input:focus {
     z-index: 100;
 }
 
-.img-wrapper {
+.media-wrapper {
     margin: auto;
     display: flex;
 }
@@ -157,7 +157,7 @@ input:focus {
         width: 460px;
     }
 
-    .image {
+    .media {
         margin-left: 0;
         margin-right: 60px;
     }
@@ -165,11 +165,11 @@ input:focus {
 
 @media screen and (min-width: 500px) and (max-width: 799px) {
 
-    #image-container {
+    #media-container {
         width: 460px;
     }
 
-    .image:nth-child(2n) {
+    .media:nth-child(2n) {
         margin-right: 0;
     }
 
@@ -187,11 +187,11 @@ input:focus {
 
 @media screen and (min-width: 800px) and (max-width: 999px) {
 
-    #image-container {
+    #media-container {
         width: 720px;
     }
 
-    .image:nth-child(3n) {
+    .media:nth-child(3n) {
         margin-right: 0;
     }
 
@@ -209,11 +209,11 @@ input:focus {
 
 @media screen and (min-width: 1000px) {
 
-    #image-container {
+    #media-container {
         width: 980px;
     }
 
-    .image:nth-child(4n) {
+    .media:nth-child(4n) {
         margin-right: 0;
     }
 

@@ -100,33 +100,40 @@ var raw_data = [
 /*jshint multistr: true */
 var modal_content_html = "\
 <div id='top-panel'></div>\
-<div class='img-wrapper'>\
+<div class='media-wrapper'>\
     <div id='left-panel' tabindex='0'>\
-        <img src='images/icons/chevron.svg' alt='Left Arrow' id='arrow-left' height='50px'>\
+        <img src='imgs/icons/chevron.svg' alt='Left Arrow' id='arrow-left' height='50px'>\
     </div>\
-    <img src='url' id='modal-image' alt='ttl' title='ttl'>\
+    {media1}\
+    tabindex='0' data_index='{idx}' data_caption='{caption}' alt='{title1}' title='{title2}' id='modal-image'\
+    {media2}\
+    src='{url}'\
+    {media3}\
     <div id='right-panel' tabindex='0'>\
-        <img src='images/icons/chevron.svg' alt='Right Arrow' id='arrow-right' height='50px'>\
+        <img src='imgs/icons/chevron.svg' alt='Right Arrow' id='arrow-right' height='50px'>\
     </div>\
 </div>\
 <div id='bottom-panel'>\
-    <p class='cpn-text'>caption</p>\
+    <p class='cpn-text'>{caption}</p>\
 </div>\
 ";
   
 /*jshint multistr: true */
-var img_div_html = "\
-<div class='image'>\
-    <img src='url' class='thumbnail'\
-    tabindex='0' data_index='idx' data_caption='cpn' alt='ttl' title='ttl'>\
+var media_div_html = "\
+<div class='media'>\
+    {media1}\
+    tabindex='0' data_index='{idx}' data_caption='{caption}' alt='{title1}' title='{title2}' class='thumbnail'\
+    {media2}\
+    src='{url}'\
+    {media3}\
 </div>\
 ";
 
-var current_html_images = []; // will be filled in laters
+var current_html_media = []; // will be filled in later
 
-function find_html_index_of_image(image) {
-    for (var i = 0; i < current_html_images.length; i++) {
-        if (current_html_images[i].getAttribute("data_index") == image.getAttribute("data_index")) {
+function find_html_index_of_media(media) {
+    for (var i = 0; i < current_html_media.length; i++) {
+        if (current_html_media[i].getAttribute("data_index") == media.getAttribute("data_index")) {
             return i;
         }
     }
@@ -135,22 +142,22 @@ function find_html_index_of_image(image) {
 var current_html_index = 0; // will be filled in later
 var modal_window = ""; // will be filled in later
 
-function next_image() {
+function next_media() {
     var next_index = current_html_index + 1;
-    if ((current_html_index + 2) > current_html_images.length) {
-        next_index = (current_html_index + 1) % current_html_images.length;
+    if ((current_html_index + 2) > current_html_media.length) {
+        next_index = (current_html_index + 1) % current_html_media.length;
     }
-    var next_image = current_html_images[next_index];
-    launch_modal(next_image);
+    var next_media = current_html_media[next_index];
+    launch_modal(next_media);
 }
 
-function previous_image() {
+function previous_media() {
     var previous_index = current_html_index - 1;
     if (current_html_index === 0) {
-        previous_index = current_html_images.length - 1;
+        previous_index = current_html_media.length - 1;
     }
-    var previous_image = current_html_images[previous_index];
-    launch_modal(previous_image);
+    var previous_media = current_html_media[previous_index];
+    launch_modal(previous_media);
 }
 
 function restore_default_keys() {
@@ -160,10 +167,10 @@ function restore_default_keys() {
 function special_keys(e) {
     if (e.keyCode === 39) { // Right Arrow
         e.preventDefault();
-        next_image();
+        next_media();
     } else if (e.keyCode === 37) { // Left Arrow
         e.preventDefault();
-        previous_image();
+        previous_media();
     } else if ((e.keyCode === 13) || (e.keyCode === 32)) { // Spacebar or Enter
         e.preventDefault();
         hide_modal();
@@ -188,28 +195,46 @@ function get_raw_item(idx) {
     }
 }
 
-function launch_modal(image) {
-    current_html_index = find_html_index_of_image(image);
+function replace_placeholders(str, item, size) {
+    html_string = str;
+
+    if (item.media === "img") {
+        var media1 = "<img";
+        var media2 = "";
+        var media3 = "/>"
+    } else if (item.media === "video") {
+        var media1 = "<video width='200' height='200'";
+        var media2 = "><source ";
+        var media3 = "></video>"
+    }
+
+    html_string = html_string.replace("{title1}", item.title).replace("{title2}", item.title);
+    html_string = html_string.replace("{idx}", item.idx).replace("{caption}", item.caption);
+    html_string = html_string.replace("{caption}", item.caption).replace("{media1}", media1);
+    html_string = html_string.replace("{media2}", media2).replace("{media3}", media3);
+
+    if (item.location == "local") {
+        if (item.media == "img") {
+            html_string = html_string.replace("{url}", "{media-type}s/{size}/" + item.url);
+            html_string = html_string.replace("{media-type}", item.media);
+            html_string = html_string.replace("{size}", size);  
+        } 
+    } else {
+        html_string = html_string.replace("{url}", item.url); 
+    }
+    return html_string;
+
+}
+
+function launch_modal(media) {
+    current_html_index = find_html_index_of_media(media);
     
     modal_window = document.getElementById("modal-window");
     var content_wrapper = document.getElementById("content-wrapper");
+    var raw_item = get_raw_item(media.getAttribute("data_index"));
+    content_wrapper.innerHTML = replace_placeholders(modal_content_html, raw_item, 'full-pictures');
 
-    var raw_item = get_raw_item(image.getAttribute("data_index"));
-    var html_string = modal_content_html;
-    html_string = html_string.replace("ttl", raw_item.title);
-    html_string = html_string.replace("ttl", raw_item.title);
-    html_string = html_string.replace("idx", raw_item.idx);
-    
-    html_string = html_string.replace("caption", raw_item.caption);
-
-    if (raw_item.location == "local") {
-        html_string = html_string.replace("url", "images/full-pictures/" + raw_item.url);             
-    } else {
-        html_string = html_string.replace("url", raw_item.url); 
-    }
-
-    content_wrapper.innerHTML = html_string;
-
+    console.log(content_wrapper.innerHTML);
     var top_panel = document.getElementById("top-panel");
     var bottom_panel = document.getElementById("bottom-panel");
     var modal_image = document.getElementById("modal-image");
@@ -233,24 +258,26 @@ function launch_modal(image) {
     modal_image.onclick = hide_modal;
 
     var right_panel = document.getElementById("right-panel");
-    right_panel.onclick = next_image;
+    console.log(right_panel);
+    right_panel.onclick = next_media;
 
     var left_panel = document.getElementById("left-panel");
-    left_panel.onclick = previous_image;
+    left_panel.onclick = previous_media;
 
     modal_window.style.display="block";
     window.scroll(0,80);
 }
 
-function bind_modal_to_imgs(imgs) {
-    for (var i = 0; i < imgs.length; i++) {
+function bind_modal_to_media(media) {
+    for (var i = 0; i < media.length; i++) {
         /*jshint -W083 */
-        imgs[i].onclick = function() {
+        console.log(media[i]);
+        media[i].onclick = function() {
             make_modal_keys();
             launch_modal(this);
         };
         /*jshint -W083 */
-        imgs[i].onkeypress = function(e) {
+        media[i].onkeypress = function(e) {
             if ((e.keyCode === 13) || (e.keyCode == 32)) {
                 make_modal_keys();
                 launch_modal(this);
@@ -259,26 +286,14 @@ function bind_modal_to_imgs(imgs) {
     }
 }
 
-function populate_images(media_list) {
-    var image_container = document.getElementById("image-container");
-    image_container.innerHTML = "";
+function populate_media(media_list) {
+    var media_container = document.getElementById("media-container");
+    media_container.innerHTML = "";
     for (var i = 0; i < media_list.length; i++) {
-        var html_string = img_div_html;
-        html_string = html_string.replace("ttl", media_list[i].title);
-        html_string = html_string.replace("ttl", media_list[i].title);
-        html_string = html_string.replace("idx", media_list[i].idx); 
-        html_string = html_string.replace("cpn", media_list[i].caption); 
-
-        if (media_list[i].location == "local") {
-            html_string = html_string.replace("url", "images/thumbnails/" + media_list[i].url);             
-        } else {
-            html_string = html_string.replace("url", media_list[i].url);  
-        }
-
-        image_container.innerHTML += html_string;
+        media_container.innerHTML += replace_placeholders(media_div_html, media_list[i], 'thumbnails');
     } 
-    current_html_images = document.getElementsByClassName("thumbnail");
-    bind_modal_to_imgs(current_html_images);
+    current_html_media = document.getElementsByClassName("thumbnail");
+    bind_modal_to_media(current_html_media);
 }
 
 
@@ -295,7 +310,7 @@ function run_search(e) {
             }
         }
     }
-    populate_images(results);
+    populate_media(results);
 
 }
 
@@ -310,9 +325,8 @@ function prevent_window_reload(e) {
     }
 }
 
-
 window.onload=function() {
-    populate_images(raw_data);
+    populate_media(raw_data);
     window.addEventListener("keydown", prevent_window_reload);
     bind_input_event();
 };
