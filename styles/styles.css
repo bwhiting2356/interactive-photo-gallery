@@ -69,6 +69,12 @@ input:focus {
     opacity: 0.75;
 }
 
+#no-results {
+    display: none;
+    margin: auto;
+    text-align: center;
+}
+
 /*************************************
     MODAL WINDOW
 *************************************/

@@ -196,16 +196,18 @@ function get_raw_item(idx) {
 }
 
 function replace_placeholders(str, item, size) {
-    html_string = str;
+    var html_string = str;
+  
+  var media1, media2, media3 = "";
 
     if (item.media === "img") {
-        var media1 = "<img";
-        var media2 = "";
-        var media3 = "/>"
+        media1 = "<img";
+        media2 = "";
+        media3 = "/>";
     } else if (item.media === "video") {
-        var media1 = "<video width='200' height='200'";
-        var media2 = "><source ";
-        var media3 = "></video>"
+        media1 = "<video width='200' height='200'";
+        media2 = "><source ";
+        media3 = "></video>";
     }
 
     html_string = html_string.replace("{title1}", item.title).replace("{title2}", item.title);
@@ -227,6 +229,8 @@ function replace_placeholders(str, item, size) {
 }
 
 function launch_modal(media) {
+    window.scroll(0,80);
+    window.scroll(0,80);
     current_html_index = find_html_index_of_media(media);
     
     modal_window = document.getElementById("modal-window");
@@ -234,18 +238,17 @@ function launch_modal(media) {
     var raw_item = get_raw_item(media.getAttribute("data_index"));
     content_wrapper.innerHTML = replace_placeholders(modal_content_html, raw_item, 'full-pictures');
 
-    console.log(content_wrapper.innerHTML);
     var top_panel = document.getElementById("top-panel");
     var bottom_panel = document.getElementById("bottom-panel");
     var modal_image = document.getElementById("modal-image");
 
     var top_height = top_panel.style.height;
     function set_bottom_height() {
-        
         var remaining_height = document.documentElement.scrollHeight - modal_image.height - top_height;
-        bottom_panel.style.height = "{}px".replace("{}", remaining_height);
+        if (remaining_height > 200) {
+            bottom_panel.style.height = "{}px".replace("{}", remaining_height);   
+        }
     }
-    set_bottom_height();
 
     window.onresize = function() {
         if (modal_window !== "") {
@@ -253,25 +256,24 @@ function launch_modal(media) {
         }
     };
 
+    set_bottom_height();
+
     top_panel.onclick = hide_modal;
     bottom_panel.onclick = hide_modal;
     modal_image.onclick = hide_modal;
 
     var right_panel = document.getElementById("right-panel");
-    console.log(right_panel);
     right_panel.onclick = next_media;
 
     var left_panel = document.getElementById("left-panel");
     left_panel.onclick = previous_media;
 
     modal_window.style.display="block";
-    window.scroll(0,80);
 }
 
 function bind_modal_to_media(media) {
     for (var i = 0; i < media.length; i++) {
         /*jshint -W083 */
-        console.log(media[i]);
         media[i].onclick = function() {
             make_modal_keys();
             launch_modal(this);
@@ -279,6 +281,7 @@ function bind_modal_to_media(media) {
         /*jshint -W083 */
         media[i].onkeypress = function(e) {
             if ((e.keyCode === 13) || (e.keyCode == 32)) {
+                e.preventDefault();
                 make_modal_keys();
                 launch_modal(this);
             }
@@ -296,7 +299,6 @@ function populate_media(media_list) {
     bind_modal_to_media(current_html_media);
 }
 
-
 function run_search(e) {
     e.preventDefault();
     var search_words = document.getElementById("search").value.toLowerCase().split(" ");
@@ -312,6 +314,12 @@ function run_search(e) {
     }
     populate_media(results);
 
+    var no_results = document.getElementById("no-results");
+    if (results.length === 0) {
+        no_results.style.display = "block";
+    } else {
+        no_results.style.display = "none";
+    }
 }
 
 function bind_input_event() {
